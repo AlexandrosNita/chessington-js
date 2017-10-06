@@ -7,17 +7,11 @@ import Square from '../../../src/engine/square';
 
 describe('Pawn', () => {
 
-    let board;
+    let board: Board;
     beforeEach(() => board = new Board());
 
-<<<<<<< HEAD:tests/engine/pieces/pawn.spec.ts
-        let board = new Board(Player.WHITE);
-        beforeEach(() => board = new Board(Player.WHITE));
-
-=======
     describe('white pawns', () => {
         
->>>>>>> 55d8468 (Added a test that pawns cannot move through other pieces):tests/engine/pieces/pawn.spec.js
         it('can only move one square up if they have already moved', () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(1, 0), pawn);
