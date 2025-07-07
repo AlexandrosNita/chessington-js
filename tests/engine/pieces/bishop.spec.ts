@@ -6,8 +6,8 @@ import Board from '../../../src/engine/board';
 
 describe('Bishop', () => {
 
-    let board;
-    beforeEach(() => board = new Board());
+    let board = new Board(Player.WHITE);
+    beforeEach(() => board = new Board(Player.WHITE));
 
     it('can move diagonally', () => {
         const bishop = new Bishop(Player.WHITE);
