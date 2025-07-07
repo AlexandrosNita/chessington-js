@@ -54,9 +54,24 @@ export default class Piece {
         while (firstLeftOccupiedPosition >= 0 && board.getPiece(new Square(currentPosition.row, firstLeftOccupiedPosition)) === undefined) {
             firstLeftOccupiedPosition -= 1;
         }
+
+        if (firstLeftOccupiedPosition >= 0) { // There is a piece on that square
+            let otherPiece: Piece | undefined = board.getPiece(new Square(currentPosition.row, firstLeftOccupiedPosition));
+            if (otherPiece !== undefined && otherPiece.player !== this.player) {
+                firstLeftOccupiedPosition -= 1;
+            }
+        }
+
         let firstRightOccupiedPosition: number = currentPosition.col + 1;
         while (firstRightOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(currentPosition.row, firstRightOccupiedPosition)) === undefined) {
             firstRightOccupiedPosition += 1;
+        }
+
+        if (firstRightOccupiedPosition < GameSettings.BOARD_SIZE) {
+            let otherPiece: Piece | undefined = board.getPiece(new Square(currentPosition.row, firstRightOccupiedPosition));
+            if (otherPiece !== undefined && otherPiece.player !== this.player) {
+                firstRightOccupiedPosition += 1;
+            }
         }
 
         horizontalPositions = horizontalPositions.slice(firstLeftOccupiedPosition + 1, firstRightOccupiedPosition);
@@ -65,10 +80,25 @@ export default class Piece {
         while (firstUpOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(firstUpOccupiedPosition, currentPosition.col)) === undefined) {
             firstUpOccupiedPosition += 1;
         }
+
+        // if (firstUpOccupiedPosition < GameSettings.BOARD_SIZE) {
+        //     let otherPiece: Piece | undefined = board.getPiece(new Square(firstUpOccupiedPosition, currentPosition.col));
+        //     if (otherPiece !== undefined && otherPiece.player !== this.player) {
+        //         firstUpOccupiedPosition += 1;
+        //     }
+        // }
+
         let firstDownOccupiedPosition: number = currentPosition.row - 1;
         while (firstDownOccupiedPosition >= 0 && board.getPiece(new Square(firstDownOccupiedPosition, currentPosition.col)) === undefined) {
             firstDownOccupiedPosition -= 1;
         }
+
+        // if (firstDownOccupiedPosition >= 0) {
+        //     let otherPiece: Piece | undefined = board.getPiece(new Square(firstDownOccupiedPosition, currentPosition.col));
+        //     if (otherPiece !== undefined && otherPiece.player !== this.player) {
+        //         firstDownOccupiedPosition -= 1;
+        //     }
+        // }
 
         verticalPositions = verticalPositions.slice(firstDownOccupiedPosition + 1, firstUpOccupiedPosition);
 
