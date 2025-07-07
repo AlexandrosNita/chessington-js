@@ -75,7 +75,8 @@ export default class Piece {
         return horizontalPositions.concat(verticalPositions);
     }
 
-    protected getBishopMoves(currentPosition: Square, direction: string): Square[] {
+    protected getBishopMoves(board: Board, direction: string): Square[] {
+        const currentPosition = board.findPiece(this);
         if (direction !== 'main' && direction !== 'secondary') {
             throw new Error('Unexpected diagonal.');
         }
@@ -84,7 +85,7 @@ export default class Piece {
         let col: number = currentPosition.col + (direction === 'main' ? -1 : 1);
 
         let result: Square[] = [] as Square[];
-        while (this.inBounds(new Square(row, col))) {
+        while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
             result.push(new Square(row, col));
 
             row -= 1;
@@ -93,7 +94,7 @@ export default class Piece {
 
         row = currentPosition.row + 1;
         col = currentPosition.col + (direction === 'main' ? 1 : -1);
-        while (this.inBounds(new Square(row, col))) {
+        while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
             result.push(new Square(row, col));
 
             row += 1;
