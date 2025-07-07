@@ -33,6 +33,13 @@ export default class Pawn extends Piece {
             result = [];
         }
 
+        for (let i: number = 0; i < result.length; i += 1) {
+            if (!this.inBounds(result[i])) {
+                result = result.slice(0, i).concat(result.slice(i + 1));
+                i -= 1;
+            }
+        }
+
         return result;
     }
 }

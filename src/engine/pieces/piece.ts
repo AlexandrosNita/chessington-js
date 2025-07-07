@@ -106,7 +106,7 @@ export default class Piece {
 
     protected deleteOccupiedSquares(possibleMoves: Square[], board: Board): Square[] {
         return possibleMoves.filter((possibleMove) => {
-            return !board.getPiece(possibleMove);
+            return (this.inBounds(possibleMove) && !board.getPiece(possibleMove));
         });
     }
 }
