@@ -72,4 +72,10 @@ export default class Piece {
 
         return result;
     }
+
+    protected deleteOccupiedSquares(possibleMoves: Square[], board: Board): Square[] {
+        return possibleMoves.filter((possibleMove) => {
+            return !board.getPiece(possibleMove);
+        });
+    }
 }
