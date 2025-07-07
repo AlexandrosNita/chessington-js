@@ -7,8 +7,8 @@ import Square from '../../../src/engine/square';
 
 describe('Knight', () => {
 
-    let board;
-    beforeEach(() => board = new Board());
+    let board = new Board(Player.WHITE);
+    beforeEach(() => board = new Board(Player.WHITE));
 
     it('can make knights moves', () => {
         const knight = new Knight(Player.WHITE);

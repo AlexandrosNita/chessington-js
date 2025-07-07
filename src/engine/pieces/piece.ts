@@ -6,7 +6,7 @@ import GameSettings from '../gameSettings';
 export default class Piece {
     public player: Player;
 
-    public constructor(player: Player) {
+    public constructor(player: Player = Player.WHITE) {
         this.player = player;
     }
 
@@ -19,7 +19,7 @@ export default class Piece {
         board.movePiece(currentSquare, newSquare);
     }
 
-    private inBounds(position: Square) {
+    protected inBounds(position: Square) {
         return (position.row >= 0 && position.row < GameSettings.BOARD_SIZE &&
                 position.col >= 0 && position.col < GameSettings.BOARD_SIZE);
     }
