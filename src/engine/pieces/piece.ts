@@ -45,7 +45,38 @@ export default class Piece {
         return result;
     }
 
-    protected getBishopMoves(currentPosition: Square, direction: string): Square[] {
+    protected cleanUpRookMoves(board: Board) {
+        const currentPosition: Square = board.findPiece(this);
+        let horizontalPositions: Square[] = this.getRookMoves(currentPosition, 'horizontal');
+        let verticalPositions: Square[] = this.getRookMoves(currentPosition, 'vertical');
+
+        let firstLeftOccupiedPosition: number = currentPosition.col - 1;
+        while (firstLeftOccupiedPosition >= 0 && board.getPiece(new Square(currentPosition.row, firstLeftOccupiedPosition)) === undefined) {
+            firstLeftOccupiedPosition -= 1;
+        }
+        let firstRightOccupiedPosition: number = currentPosition.col + 1;
+        while (firstRightOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(currentPosition.row, firstRightOccupiedPosition)) === undefined) {
+            firstRightOccupiedPosition += 1;
+        }
+
+        horizontalPositions = horizontalPositions.slice(firstLeftOccupiedPosition + 1, firstRightOccupiedPosition);
+
+        let firstUpOccupiedPosition: number = currentPosition.row + 1;
+        while (firstUpOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(firstUpOccupiedPosition, currentPosition.col)) === undefined) {
+            firstUpOccupiedPosition += 1;
+        }
+        let firstDownOccupiedPosition: number = currentPosition.row - 1;
+        while (firstDownOccupiedPosition >= 0 && board.getPiece(new Square(firstDownOccupiedPosition, currentPosition.col)) === undefined) {
+            firstDownOccupiedPosition -= 1;
+        }
+
+        verticalPositions = verticalPositions.slice(firstDownOccupiedPosition + 1, firstUpOccupiedPosition);
+
+        return horizontalPositions.concat(verticalPositions);
+    }
+
+    protected getBishopMoves(board: Board, direction: string): Square[] {
+        const currentPosition = board.findPiece(this);
         if (direction !== 'main' && direction !== 'secondary') {
             throw new Error('Unexpected diagonal.');
         }
@@ -54,7 +85,7 @@ export default class Piece {
         let col: number = currentPosition.col + (direction === 'main' ? -1 : 1);
 
         let result: Square[] = [] as Square[];
-        while (this.inBounds(new Square(row, col))) {
+        while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
             result.push(new Square(row, col));
 
             row -= 1;
@@ -63,7 +94,7 @@ export default class Piece {
 
         row = currentPosition.row + 1;
         col = currentPosition.col + (direction === 'main' ? 1 : -1);
-        while (this.inBounds(new Square(row, col))) {
+        while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
             result.push(new Square(row, col));
 
             row += 1;
@@ -71,5 +102,11 @@ export default class Piece {
         }
 
         return result;
+    }
+
+    protected deleteOccupiedSquares(possibleMoves: Square[], board: Board): Square[] {
+        return possibleMoves.filter((possibleMove) => {
+            return (this.inBounds(possibleMove) && !board.getPiece(possibleMove));
+        });
     }
 }

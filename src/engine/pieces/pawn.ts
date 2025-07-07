@@ -10,29 +10,36 @@ export default class Pawn extends Piece {
 
     public getAvailableMoves(board: Board): Square[] {
         const currentPosition = board.findPiece(this);
-        if (this.player === Player.WHITE) {
-            return this.getAvailableMovesWhite(currentPosition);
-        }
-        return this.getAvailableMovesBlack(currentPosition);
+        return this.getAvailableMovesPerPlayer(currentPosition, board);
     }
 
-    private getAvailableMovesWhite(currentPosition: Square): Square[] {
-        if (currentPosition.row === 1) {
-            return [
-                new Square(currentPosition.row + 1, currentPosition.col),
-                new Square(currentPosition.row + 2, currentPosition.col)
-            ]
-        }
-        return [new Square(currentPosition.row + 1, currentPosition.col)];
-    }
+    private getAvailableMovesPerPlayer(currentPosition: Square, board: Board): Square[] {
+        let result: Square[];
+        const startRow = (this.player === Player.WHITE ? 1 : 6);
+        const offset = (this.player === Player.WHITE ? 1 : -1);
 
-    private getAvailableMovesBlack(currentPosition: Square): Square[] {
-        if (currentPosition.row === 6) {
-            return [
-                new Square(currentPosition.row - 1, currentPosition.col),
-                new Square(currentPosition.row - 2, currentPosition.col)
-            ]
+        if (currentPosition.row == startRow) {
+            result = [
+                new Square(currentPosition.row + offset, currentPosition.col),
+                new Square(currentPosition.row + (Math.abs(offset) + 1) * Math.sign(offset), currentPosition.col)
+            ];
+        } else {
+            result = [new Square(currentPosition.row + offset, currentPosition.col)];
         }
-        return [new Square(currentPosition.row - 1, currentPosition.col)];
+
+        result = this.deleteOccupiedSquares(result, board);
+
+        if (result.length == 1 && Math.abs(result[0].row - currentPosition.row) == 2) {
+            result = [];
+        }
+
+        for (let i: number = 0; i < result.length; i += 1) {
+            if (!this.inBounds(result[i])) {
+                result = result.slice(0, i).concat(result.slice(i + 1));
+                i -= 1;
+            }
+        }
+
+        return result;
     }
 }
