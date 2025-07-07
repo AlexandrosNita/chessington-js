@@ -6,17 +6,11 @@ import Square from '../../../src/engine/square';
 
 describe('Pawn', () => {
 
-<<<<<<< HEAD:tests/engine/pieces/pawn.spec.ts
-    let board = new Board();
-    beforeEach(() => board = new Board());
-
-=======
->>>>>>> 716fede (Add a test for pawns moving two spaces initially):tests/engine/pieces/pawn.spec.js
     describe('white pawns', () => {
 
-        let board;
-        beforeEach(() => board = new Board());    
-        
+        let board = new Board(Player.WHITE);
+        beforeEach(() => board = new Board(Player.WHITE));
+
         it('can only move one square up if they have already moved', () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(1, 0), pawn);
@@ -42,8 +36,8 @@ describe('Pawn', () => {
 
     describe('black pawns', () => {
 
-        let board;
-        beforeEach(() => board = new Board(Player.BLACK));    
+        let board = new Board(Player.BLACK);
+        beforeEach(() => board = new Board(Player.BLACK));
         
         it('can only move one square down if they have already moved', () => {
             const pawn = new Pawn(Player.BLACK);

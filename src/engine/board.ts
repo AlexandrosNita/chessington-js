@@ -4,16 +4,11 @@ import Square from './square';
 import Piece from './pieces/piece';
 
 export default class Board {
-<<<<<<< HEAD:src/engine/board.ts
     public currentPlayer: Player;
     private readonly board: (Piece | undefined)[][];
 
-    public constructor() {
-        this.currentPlayer = Player.WHITE;
-=======
-    constructor(currentPlayer) {
+    constructor(currentPlayer: Player | undefined) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
->>>>>>> 716fede (Add a test for pawns moving two spaces initially):src/engine/board.js
         this.board = this.createBoard();
     }
 

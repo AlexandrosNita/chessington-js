@@ -4,26 +4,35 @@ import Board from '../board';
 import Square from '../square';
 
 export default class Pawn extends Piece {
-    public hasFirstMove: boolean = true;
-
     public constructor(player: Player) {
         super(player);
     }
 
     public getAvailableMoves(board: Board): Square[] {
         const currentPosition = board.findPiece(this);
-        const availableOffsets = this.choosePossibleOffsets();
-        const result: Square[] = [];
-        for (let num of availableOffsets) {
-            result.push(new Square(currentPosition.row + num, currentPosition.col));
+        if (this.player === Player.WHITE) {
+            return this.getAvailableMovesWhite(currentPosition);
         }
-        return result;
+        return this.getAvailableMovesBlack(currentPosition);
     }
 
-    private choosePossibleOffsets(): number[] {
-        if (this.hasFirstMove) {
-            return (this.player === Player.WHITE ? [1, 2] : [-1, -2]);
+    private getAvailableMovesWhite(currentPosition: Square): Square[] {
+        if (currentPosition.row === 1) {
+            return [
+                new Square(currentPosition.row + 1, currentPosition.col),
+                new Square(currentPosition.row + 2, currentPosition.col)
+            ]
         }
-        return (this.player === Player.WHITE ? [1] : [-1]);
+        return [new Square(currentPosition.row + 1, currentPosition.col)];
+    }
+
+    private getAvailableMovesBlack(currentPosition: Square): Square[] {
+        if (currentPosition.row === 6) {
+            return [
+                new Square(currentPosition.row - 1, currentPosition.col),
+                new Square(currentPosition.row - 2, currentPosition.col)
+            ]
+        }
+        return [new Square(currentPosition.row - 1, currentPosition.col)];
     }
 }
