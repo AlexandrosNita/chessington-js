@@ -40,6 +40,30 @@ export default class Pawn extends Piece {
             }
         }
 
+        let diagonalLeft: Square;
+        let diagonalRight: Square;
+
+        if (this.player === Player.WHITE) {
+            diagonalLeft = new Square(currentPosition.row + 1, currentPosition.col - 1);
+            diagonalRight = new Square(currentPosition.row + 1, currentPosition.col + 1);
+        } else {
+            diagonalLeft = new Square(currentPosition.row - 1, currentPosition.col - 1);
+            diagonalRight = new Square(currentPosition.row - 1, currentPosition.col + 1);
+        }
+
+        if (this.inBounds(diagonalLeft)) {
+            const otherPiece = board.getPiece(diagonalLeft);
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(diagonalLeft);
+            }
+        }
+        if (this.inBounds(diagonalRight)) {
+            const otherPiece = board.getPiece(diagonalRight);
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(diagonalRight);
+            }
+        }
+
         return result;
     }
 }
