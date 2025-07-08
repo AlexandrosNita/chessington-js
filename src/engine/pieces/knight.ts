@@ -16,7 +16,19 @@ export default class Knight extends Piece {
         let result: Square[] = [] as Square[];
         for (let i: number = 0; i < Knight.rowChanges.length; i += 1) {
             const newSquare: Square = new Square(currentPosition.row + Knight.rowChanges[i], currentPosition.col + Knight.colChanges[i]);
-            result.push(newSquare);
+
+            if (!this.inBounds(newSquare)) {
+                continue;
+            }
+
+            if (board.getPiece(newSquare) !== undefined) {
+                const otherPiece: Piece | undefined = board.getPiece(newSquare);
+                if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                    result.push(newSquare);
+                }
+            } else {
+                result.push(newSquare);
+            }
         }
         return result;
     }
