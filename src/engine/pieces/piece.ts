@@ -87,6 +87,13 @@ export default class Piece {
             col += (direction === 'main' ? -1 : 1);
         }
 
+        if (this.inBounds(new Square(row, col))) {
+            const otherPiece: Piece | undefined = board.getPiece(new Square(row, col));
+            if (otherPiece !== undefined && otherPiece.player != this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(new Square(row, col));
+            }
+        }
+
         row = currentPosition.row + 1;
         col = currentPosition.col + (direction === 'main' ? 1 : -1);
         while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
@@ -94,6 +101,13 @@ export default class Piece {
 
             row += 1;
             col += (direction === 'main' ? 1 : -1);
+        }
+
+        if (this.inBounds(new Square(row, col))) {
+            const otherPiece: Piece | undefined = board.getPiece(new Square(row, col));
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(new Square(row, col));
+            }
         }
 
         return result;
