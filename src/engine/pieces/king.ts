@@ -16,7 +16,19 @@ export default class King extends Piece {
         let result: Square[] = [] as Square[];
         for (let i: number = 0; i < King.rowChanges.length; i += 1) {
             const newSquare: Square = new Square(currentPosition.row + King.rowChanges[i], currentPosition.col + King.colChanges[i]);
-            result.push(newSquare);
+
+            if (!this.inBounds(newSquare)) {
+                continue;
+            }
+
+            if (board.getPiece(newSquare) !== undefined) {
+                const otherPiece: Piece | undefined = board.getPiece(newSquare);
+                if (otherPiece !== undefined && otherPiece.player != this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                    result.push(newSquare);
+                }
+            } else {
+                result.push(newSquare);
+            }
         }
         return result;
     }
