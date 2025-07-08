@@ -10,7 +10,7 @@ export default class Queen extends Piece {
 
     public getAvailableMoves(board: Board) {
         const currentPosition: Square = board.findPiece(this);
-        let rookMoves: Square[] = this.cleanUpRookMoves(board);
+        let rookMoves: Square[] = this.getRookMoves(board, 'horizontal').concat(this.getRookMoves(board, 'vertical'));
         let bishopMoves: Square[] = this.getBishopMoves(board, 'main').concat(this.getBishopMoves(board, 'secondary'));
         return rookMoves.concat(bishopMoves);
     }
