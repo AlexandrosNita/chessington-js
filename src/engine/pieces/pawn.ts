@@ -52,8 +52,8 @@ export default class Pawn extends Piece {
         }
 
         if (this.inBounds(diagonalLeft)) {
-            const otherPiece = board.getPiece(diagonalLeft);
-            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+            const otherPiece = board.getPiece(diagonalLeft)!;
+            if (otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
                 result.push(diagonalLeft);
             }
         }
@@ -63,6 +63,8 @@ export default class Pawn extends Piece {
                 result.push(diagonalRight);
             }
         }
+
+        console.log('schimbare minim');
 
         return result;
     }
