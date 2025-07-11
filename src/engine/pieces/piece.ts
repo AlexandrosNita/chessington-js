@@ -2,6 +2,7 @@ import Player from '../player';
 import Board from '../board';
 import Square from '../square';
 import GameSettings from '../gameSettings';
+import King from "./king";
 
 export default class Piece {
     public player: Player;
@@ -24,55 +25,49 @@ export default class Piece {
                 position.col >= 0 && position.col < GameSettings.BOARD_SIZE);
     }
 
-    protected getRookMoves(currentPosition: Square, direction: string): Square[] {
+    private getSquarePerDirection(constantDirection: number, changingDirection: number, direction: string): Square {
+        return (direction === 'horizontal' ? new Square(constantDirection, changingDirection) : new Square(changingDirection, constantDirection));
+    }
+
+    protected getRookMoves(board: Board, direction: string): Square[] {
         if (direction !== 'horizontal' && direction !== 'vertical') {
             throw new Error('Unexpected direction.');
         }
+
+        const currentPosition = board.findPiece(this);
 
         const constantDirection = (direction === 'horizontal') ? currentPosition.row : currentPosition.col;
         const otherCoordinate = (direction === 'horizontal') ? currentPosition.col : currentPosition.row;
 
         let result: Square[] = [] as Square[];
-        for (let i: number = 0; i < GameSettings.BOARD_SIZE; i += 1) {
-            if (i === otherCoordinate) {
-                continue;
-            }
 
-            const newSquare: Square = (direction === 'horizontal') ? new Square(constantDirection, i) : new Square(i, constantDirection);
-            result.push(newSquare);
+        let changingCoordinate = otherCoordinate - 1;
+        while (changingCoordinate >= 0 && board.getPiece(this.getSquarePerDirection(constantDirection, changingCoordinate, direction)) === undefined) {
+            result.push(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            changingCoordinate -= 1;
+        }
+
+        if (changingCoordinate >= 0) { // There is a piece on that square
+            const otherPiece: Piece | undefined = board.getPiece(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            }
+        }
+
+        changingCoordinate = otherCoordinate + 1;
+        while (changingCoordinate < GameSettings.BOARD_SIZE && board.getPiece(this.getSquarePerDirection(constantDirection, changingCoordinate, direction)) === undefined) {
+            result.push(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            changingCoordinate += 1;
+        }
+
+        if (changingCoordinate < GameSettings.BOARD_SIZE) {
+            const otherPiece : Piece | undefined = board.getPiece(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(this.getSquarePerDirection(constantDirection, changingCoordinate, direction));
+            }
         }
 
         return result;
-    }
-
-    protected cleanUpRookMoves(board: Board) {
-        const currentPosition: Square = board.findPiece(this);
-        let horizontalPositions: Square[] = this.getRookMoves(currentPosition, 'horizontal');
-        let verticalPositions: Square[] = this.getRookMoves(currentPosition, 'vertical');
-
-        let firstLeftOccupiedPosition: number = currentPosition.col - 1;
-        while (firstLeftOccupiedPosition >= 0 && board.getPiece(new Square(currentPosition.row, firstLeftOccupiedPosition)) === undefined) {
-            firstLeftOccupiedPosition -= 1;
-        }
-        let firstRightOccupiedPosition: number = currentPosition.col + 1;
-        while (firstRightOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(currentPosition.row, firstRightOccupiedPosition)) === undefined) {
-            firstRightOccupiedPosition += 1;
-        }
-
-        horizontalPositions = horizontalPositions.slice(firstLeftOccupiedPosition + 1, firstRightOccupiedPosition);
-
-        let firstUpOccupiedPosition: number = currentPosition.row + 1;
-        while (firstUpOccupiedPosition < GameSettings.BOARD_SIZE && board.getPiece(new Square(firstUpOccupiedPosition, currentPosition.col)) === undefined) {
-            firstUpOccupiedPosition += 1;
-        }
-        let firstDownOccupiedPosition: number = currentPosition.row - 1;
-        while (firstDownOccupiedPosition >= 0 && board.getPiece(new Square(firstDownOccupiedPosition, currentPosition.col)) === undefined) {
-            firstDownOccupiedPosition -= 1;
-        }
-
-        verticalPositions = verticalPositions.slice(firstDownOccupiedPosition + 1, firstUpOccupiedPosition);
-
-        return horizontalPositions.concat(verticalPositions);
     }
 
     protected getBishopMoves(board: Board, direction: string): Square[] {
@@ -92,6 +87,13 @@ export default class Piece {
             col += (direction === 'main' ? -1 : 1);
         }
 
+        if (this.inBounds(new Square(row, col))) {
+            const otherPiece: Piece | undefined = board.getPiece(new Square(row, col));
+            if (otherPiece !== undefined && otherPiece.player != this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(new Square(row, col));
+            }
+        }
+
         row = currentPosition.row + 1;
         col = currentPosition.col + (direction === 'main' ? 1 : -1);
         while (this.inBounds(new Square(row, col)) && board.getPiece(new Square(row, col)) === undefined) {
@@ -99,6 +101,13 @@ export default class Piece {
 
             row += 1;
             col += (direction === 'main' ? 1 : -1);
+        }
+
+        if (this.inBounds(new Square(row, col))) {
+            const otherPiece: Piece | undefined = board.getPiece(new Square(row, col));
+            if (otherPiece !== undefined && otherPiece.player !== this.player && Object.getPrototypeOf(otherPiece).constructor.name !== 'King') {
+                result.push(new Square(row, col));
+            }
         }
 
         return result;

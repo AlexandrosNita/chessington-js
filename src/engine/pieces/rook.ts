@@ -8,6 +8,6 @@ export default class Rook extends Piece {
     }
 
     public getAvailableMoves(board: Board) {
-        return this.cleanUpRookMoves(board);
+        return this.getRookMoves(board, 'horizontal').concat(this.getRookMoves(board, 'vertical'));
     }
 }
